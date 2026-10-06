@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My Sites</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF1E8; --ink:#17233B; --muted:#5B6578; --grid:rgba(23,35,59,.07);
+  --card:#FBFCF8; --line:#17233B;
+  --c1:#2F5BFF; --c2:#FFC93C; --c3:#FF6B8B; --c4:#2DBE8E; --c5:#8C6BFF;
+}
+@media (prefers-color-scheme:dark){
+  :root{--paper:#10172A; --ink:#EEF1E8; --muted:#9AA5BD; --grid:rgba(238,241,232,.06); --card:#18213A; --line:#EEF1E8}
+}
+*{box-sizing:border-box}
+html{scroll-padding-top:1rem}
+body{
+  margin:0; min-height:100vh; color:var(--ink); background:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:28px 28px;
+  font:400 1rem/1.55 "DM Sans",system-ui,sans-serif;
+}
+main{max-width:1040px; margin:0 auto; padding:clamp(2rem,7vw,5rem) 1.25rem 4rem}
+h1{
+  font:800 clamp(2.8rem,10vw,6.5rem)/.92 "Bricolage Grotesque",system-ui,sans-serif;
+  letter-spacing:-.03em; margin:0 0 1rem;
+}
+.intro{max-width:34rem; color:var(--muted); font-size:1.1rem; margin:0 0 2rem}
+.tools{display:flex; flex-wrap:wrap; gap:.6rem; align-items:center; margin-bottom:2rem}
+input[type=search]{
+  flex:1 1 14rem; padding:.7rem 1rem; font:inherit; color:var(--ink);
+  background:var(--card); border:2px solid var(--line); border-radius:999px;
+}
+.chip{
+  font:500 .9rem "DM Sans",sans-serif; color:var(--ink); background:transparent;
+  border:2px solid var(--line); border-radius:999px; padding:.45rem .9rem; cursor:pointer;
+}
+.chip[aria-pressed=true]{background:var(--ink); color:var(--paper)}
+:focus-visible{outline:3px solid var(--c1); outline-offset:3px}
+.grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(270px,1fr)); gap:1.25rem}
+.card{
+  position:relative; display:flex; flex-direction:column; gap:.5rem; min-height:11rem;
+  padding:1.25rem; text-decoration:none; color:inherit;
+  background:var(--card); border:2px solid var(--line); border-radius:6px 22px 6px 22px;
+  box-shadow:5px 5px 0 var(--accent);
+  transition:transform .15s, box-shadow .15s;
+}
+.card:hover{transform:translate(-3px,-3px); box-shadow:8px 8px 0 var(--accent)}
+.badge{
+  width:2.6rem; height:2.6rem; display:grid; place-items:center; border-radius:50%;
+  background:var(--accent); color:#17233B; border:2px solid var(--line);
+  font:800 1.2rem "Bricolage Grotesque",sans-serif;
+}
+.card h2{font:800 1.4rem/1.15 "Bricolage Grotesque",sans-serif; margin:.4rem 0 0}
+.card p{margin:0; color:var(--muted); flex:1}
+.meta{display:flex; justify-content:space-between; font-size:.85rem; color:var(--muted)}
+.empty{display:none; color:var(--muted); padding:2rem 0}
+footer{margin-top:3.5rem; color:var(--muted); font-size:.9rem}
+@media (prefers-reduced-motion:reduce){.card{transition:none}}
+</style>
+</head>
+<body>
+<main>
+  <h1>My Sites</h1>
+  <p class="intro">Everything I've built, in one place. Pick one to open it.</p>
+
+  <div class="tools">
+    <input type="search" id="q" placeholder="Search my sites" aria-label="Search my sites">
+    <span id="chips" role="group" aria-label="Filter by category"></span>
+  </div>
+
+  <div class="grid" id="grid"></div>
+  <p class="empty" id="empty">No sites match that search. Try a different word.</p>
+
+  <footer>Made with GitHub Pages.</footer>
+</main>
+
+<script>
+/* ============ EDIT THIS LIST ============
+   Add, remove, or change sites here. Each one needs:
+   name, url, description, category.
+   Pick a color from 1 to 5 (optional). */
+const SITES = [
+  { name: "Chatroom",    url: "https://YOURNAME.github.io/chatroom/", description: "Chat with everyone on the same wifi.", category: "Tools", color: 1 },
+  { name: "Games",       url: "https://YOURNAME.github.io/games/",    description: "Games you can play right in the browser.", category: "Fun", color: 3 },
+  { name: "Band Audio",  url: "https://YOURNAME.github.io/audio/",    description: "Recordings and practice tracks.", category: "Music", color: 2 },
+  { name: "Project Log", url: "https://YOURNAME.github.io/projects/", description: "Notes on what I'm building and learning.", category: "Tools", color: 4 },
+  { name: "Your next site", url: "https://YOURNAME.github.io/",       description: "Replace this with anything you make.", category: "Fun", color: 5 }
+];
+/* ======================================== */
+
+const grid = document.getElementById("grid");
+const q = document.getElementById("q");
+const chips = document.getElementById("chips");
+const empty = document.getElementById("empty");
+let active = "All";
+
+const cats = ["All", ...new Set(SITES.map(s => s.category))];
+cats.forEach(c => {
+  const b = document.createElement("button");
+  b.className = "chip"; b.textContent = c; b.type = "button";
+  b.setAttribute("aria-pressed", c === active);
+  b.onclick = () => { active = c; [...chips.children].forEach(x => x.setAttribute("aria-pressed", x === b)); render(); };
+  chips.appendChild(b);
+});
+
+function render(){
+  const term = q.value.trim().toLowerCase();
+  grid.innerHTML = "";
+  let shown = 0;
+  SITES.forEach((s, i) => {
+    const hay = (s.name + " " + s.description + " " + s.category).toLowerCase();
+    if ((active !== "All" && s.category !== active) || (term && !hay.includes(term))) return;
+    shown++;
+    const a = document.createElement("a");
+    a.className = "card"; a.href = s.url; a.target = "_blank"; a.rel = "noopener";
+    a.style.setProperty("--accent", `var(--c${s.color || (i % 5) + 1})`);
+    const host = s.url.replace(/^https?:\/\//, "").replace(/\/$/, "");
+    a.innerHTML = `<div class="badge"></div><h2></h2><p></p><div class="meta"><span></span><span>Open</span></div>`;
+    a.querySelector(".badge").textContent = s.name.charAt(0).toUpperCase();
+    a.querySelector("h2").textContent = s.name;
+    a.querySelector("p").textContent = s.description;
+    a.querySelector(".meta span").textContent = s.category;
+    a.title = host;
+    grid.appendChild(a);
+  });
+  empty.style.display = shown ? "none" : "block";
+}
+q.addEventListener("input", render);
+render();
+</script>
+</body>
+</html>

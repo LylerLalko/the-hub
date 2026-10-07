@@ -8,10 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  #viewer{position:fixed; inset:0; z-index:10; display:flex; flex-direction:column; background:var(--paper)}
-  #viewer[hidden]{display:none}
-  #back{align-self:flex-start; margin:.6rem; font:500 .95rem "DM Sans",sans-serif; color:var(--ink); background:var(--card); border:2px solid var(--line); border-radius:999px; padding:.45rem 1rem; cursor:pointer}
-  #frame{flex:1; width:100%; border:0}
+  
 :root{
   --paper:#EEF1E8; --ink:#17233B; --muted:#5B6578; --grid:rgba(23,35,59,.07);
   --card:#FBFCF8; --line:#17233B;
@@ -83,15 +80,10 @@ footer{margin-top:3.5rem; color:var(--muted); font-size:.9rem}
   <footer>Email lylerlalko@gmail.com to request new sites/games. I can pretty much do anything. If you need something, DO NOT hesitate to ask! I am here to serve the people and rebel against the blocking of game websites.</footer>
 </main>
 
-<div id="viewer" hidden>
-  <button id="back" type="button">Back to hub</button>
-  <iframe id="frame" title="Embedded Site" allow="fullscreen; autoplay; microphone; camera"></iframe>
-</div>
+
   
 <script>
-const viewer = document.getElementById("viewer);
-const frame = document.getElementById("viewer);
-document.getElementById("back").onclick = () => { viewer.hidden = true; frame.src = "about:blank"; };
+
 /* ============ EDIT THIS LIST ============
    Add, remove, or change sites here. Each one needs:
    name, url, description, category.
@@ -107,7 +99,7 @@ const SITES = [
   { name: "A Dark Room", url: "https://lylerlalko.github.io/adarkroom",       description: "A Dark Room", category: "Games", color: 5 },
   { name: "Lyler's Updated Game Site", url: "https://lylerlalko.github.io/onlythebest", description: "Got a lot more games than it used to.", category: "Games", color: 3 },
   { name: "Movies and Assorted Games", url: "https://lylerlalko.github.io/whateveridgaf", description: "Not exactly my site but still a very good one ;)", category: "Stolen", color: 5 },
-  { name: "Deltarune Fight Sim", url: "https://deltarunesim.com", description: "Not made by Toby Fox. May or may not be blocked by Securly.", category: "Games", color: 3, embed: true } 
+  { name: "Deltarune Fight Sim", url: "https://deltarunesim.com", description: "Not made by Toby Fox. May or may not be blocked by Securly.", category: "Games", color: 3 } 
 ];
 /* ======================================== */
 
@@ -136,9 +128,7 @@ function render(){
     shown++;
     const a = document.createElement("a");
     a.className = "card"; a.href = s.url; a.target = "_blank"; a.rel = "noopener";
-    if (s.embed) {
-      a.addEventListener("click", e => { e.preventDefault(); frame.src = url; viewer.hidden = false; });
-    }
+    
     a.style.setProperty("--accent", `var(--c${s.color || (i % 5) + 1})`);
     const host = s.url.replace(/^https?:\/\//, "").replace(/\/$/, "");
     a.innerHTML = `<div class="badge"></div><h2></h2><p></p><div class="meta"><span></span><span>Open</span></div>`;
